@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -215,6 +215,25 @@ function SidebarTips() {
 
 export default function PreviewPage() {
   const [data, setData] = useState<ResumeData>(initialData)
+
+  // If redirected back from LinkedIn, accept imported data from query param.
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const url = new URL(window.location.href)
+    const encoded = url.searchParams.get("import")
+    if (encoded) {
+      try {
+        const parsed = JSON.parse(atob(encoded.replaceAll("-", "+").replaceAll("_", "/"))) as Partial<{
+          personal: ResumeData["personal"]
+        }>
+        setData((d) => ({ ...d, ...parsed }))
+        url.searchParams.delete("import")
+        window.history.replaceState({}, "", url.toString())
+      } catch {
+        // ignore malformed payloads
+      }
+    }
+  }, [])
 
   const skillsString = useMemo(() => data.skills.join(", "), [data.skills])
 
@@ -500,6 +519,24 @@ export default function PreviewPage() {
         <aside className="lg:col-span-3">
           <div className="grid gap-4">
             <SidebarTips />
+            {/* LinkedIn Import */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Import from LinkedIn</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-2">
+                <Button asChild variant="outline">
+                  <Link href="/api/auth/linkedin/start" className="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" className="size-4" aria-hidden>
+                      <rect fill="#0A66C2" width="72" height="72" rx="8" />
+                      <path fill="#fff" d="M16.6 27.3h8.6v27.7h-8.6zM21 17.1c2.8 0 5.1 2.3 5.1 5.1s-2.3 5.1-5.1 5.1a5.1 5.1 0 1 1 0-10.2zM30.6 27.3h8.2v3.8h.1c1.1-2.1 3.9-4.4 8-4.4 8.6 0 10.2 5.6 10.2 12.9v15.4H48.5V41.7c0-3-0.1-6.8-4.2-6.8-4.2 0-4.9 3.2-4.9 6.6v13.4h-8.7V27.3z"/>
+                    </svg>
+                    <span>Sign in with LinkedIn</span>
+                  </Link>
+                </Button>
+                <p className="text-xs text-muted-foreground">We’ll import basic profile info only.</p>
+              </CardContent>
+            </Card>
             <Card>
               <CardHeader>
                 <CardTitle className="text-base">Document</CardTitle>

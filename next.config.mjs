@@ -9,6 +9,20 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  async redirects() {
+    return [
+      {
+        source: "/auth/linkedin/callback",
+        destination: "/api/auth/linkedin/callback",
+        permanent: false,
+      },
+      {
+        source: "/auth/linkedin/callback/",
+        destination: "/api/auth/linkedin/callback",
+        permanent: false,
+      },
+    ]
+  },
 }
 
 export default nextConfig
