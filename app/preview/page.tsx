@@ -657,7 +657,7 @@ export default function PreviewPage() {
             {/* CV Upload */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Upload CV</CardTitle>
+                <CardTitle className="text-base">Elevate Your Old Resume with AI</CardTitle>
               </CardHeader>
               <CardContent className="grid gap-2">
                 <div className="grid gap-2">
