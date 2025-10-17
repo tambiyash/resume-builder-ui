@@ -38,9 +38,9 @@ export function TopNav() {
   }, [menuOpen])
 
   return (
-    <nav className="border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link href="/" className="font-medium">Resume Studio</Link>
+        <Link href="/" className="font-medium">Resume Builder Studio</Link>
 
         {!isAuthenticated ? (
           <div className="flex items-center gap-3">

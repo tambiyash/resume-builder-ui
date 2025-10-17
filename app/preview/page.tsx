@@ -28,6 +28,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Separator } from "@/components/ui/separator"
+import { ATSScoreModal } from "@/components/ats-score-modal"
 
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -43,6 +44,63 @@ function ResumePreview({ data }: { data: ResumeData }) {
         <div>
           <h1 className="text-2xl font-semibold leading-tight">{data.personal.fullName}</h1>
           <p className="text-sm text-muted-foreground">{data.personal.title}</p>
+          
+          {/* Contact Details */}
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+            {data.personal.email && (
+              <div className="flex items-center gap-1.5">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="size-3.5"
+                >
+                  <rect width="20" height="16" x="2" y="4" rx="2" />
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg>
+                <span>{data.personal.email}</span>
+              </div>
+            )}
+            {data.personal.phone && (
+              <div className="flex items-center gap-1.5">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="size-3.5"
+                >
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+                <span>{data.personal.phone}</span>
+              </div>
+            )}
+            {data.personal.location && (
+              <div className="flex items-center gap-1.5">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="size-3.5"
+                >
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+                <span>{data.personal.location}</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -144,6 +202,10 @@ function SidebarTips() {
 export default function PreviewPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+  const [cvSummary, setCvSummary] = useState<string | null>(null)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
 
   // Zustand selectors - efficient and split by section
   const personal = usePersonalInfo()
@@ -207,6 +269,64 @@ export default function PreviewPage() {
     [personal, experience, education, skills, languages, certificates]
   )
 
+  // Handle file upload
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadError(null)
+    setCvSummary(null)
+
+    // Validate file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024
+    if (file.size > maxSize) {
+      setUploadError("File size must be less than 10MB")
+      return
+    }
+
+    // Validate file type
+    const validTypes = [
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'text/plain',
+      'application/pdf'
+    ]
+    if (!validTypes.includes(file.type)) {
+      setUploadError("Invalid file type. Please upload .doc, .docx, .txt, or .pdf")
+      return
+    }
+
+    setUploadedFile(file)
+    setIsAnalyzing(true)
+
+    // Send file to API for parsing
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await fetch('/api/analyze-cv', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to parse CV')
+      }
+
+      // Import the parsed data into Zustand store
+      if (result.data) {
+        importResumeData(result.data)
+        setCvSummary('CV data successfully imported! Your resume has been updated.')
+      }
+    } catch (err: any) {
+      setUploadError(err.message || 'Failed to parse CV')
+    } finally {
+      setIsAnalyzing(false)
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="flex min-h-[100svh] items-center justify-center">
@@ -220,12 +340,26 @@ export default function PreviewPage() {
       <div className="mx-auto max-w-6xl px-4 py-6">
         {/* Top actions bar */}
         <div className="mb-6 flex items-center justify-end gap-2">
-          <div className="rounded-full border px-3 py-1 text-xs">
-            ATS Score: <span className="font-medium">—</span>
-          </div>
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/">Back</Link>
-          </Button>
+          <ATSScoreModal 
+            resumeData={resumeData}
+            trigger={
+              <Button variant="outline" size="sm">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="mr-2 size-4"
+                >
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                </svg>
+                ATS Score
+              </Button>
+            }
+          />
           <Button size="sm">Download</Button>
         </div>
 
@@ -456,22 +590,119 @@ export default function PreviewPage() {
         <aside className="lg:col-span-3">
           <div className="grid gap-4">
             <SidebarTips />
-            {/* LinkedIn Import */}
+            {/* CV Upload */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Import from LinkedIn</CardTitle>
+                <CardTitle className="text-base">Upload CV</CardTitle>
               </CardHeader>
               <CardContent className="grid gap-2">
-                <Button asChild variant="outline">
-                  <Link href="/api/auth/linkedin/start" className="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" className="size-4" aria-hidden>
-                      <rect fill="#0A66C2" width="72" height="72" rx="8" />
-                      <path fill="#fff" d="M16.6 27.3h8.6v27.7h-8.6zM21 17.1c2.8 0 5.1 2.3 5.1 5.1s-2.3 5.1-5.1 5.1a5.1 5.1 0 1 1 0-10.2zM30.6 27.3h8.2v3.8h.1c1.1-2.1 3.9-4.4 8-4.4 8.6 0 10.2 5.6 10.2 12.9v15.4H48.5V41.7c0-3-0.1-6.8-4.2-6.8-4.2 0-4.9 3.2-4.9 6.6v13.4h-8.7V27.3z"/>
-                    </svg>
-                    <span>Sign in with LinkedIn</span>
-                  </Link>
-                </Button>
-                <p className="text-xs text-muted-foreground">We’ll import basic profile info only.</p>
+                <div className="grid gap-2">
+                  <input
+                    type="file"
+                    id="cv-upload"
+                    accept=".doc,.docx,.txt,.pdf"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
+                  <Button
+                    variant="outline"
+                    onClick={() => document.getElementById("cv-upload")?.click()}
+                    className="flex items-center gap-2"
+                    disabled={isAnalyzing}
+                  >
+                    {isAnalyzing ? (
+                      <>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="size-4 animate-spin"
+                        >
+                          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                        </svg>
+                        <span>Analyzing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="size-4"
+                        >
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                          <polyline points="17 8 12 3 7 8" />
+                          <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                        <span>Choose File</span>
+                      </>
+                    )}
+                  </Button>
+                  {uploadedFile && (
+                    <div className="flex items-center gap-2 rounded-md border border-border bg-muted/50 px-3 py-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="size-4 text-muted-foreground"
+                      >
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                        <polyline points="14 2 14 8 20 8" />
+                      </svg>
+                      <span className="flex-1 truncate text-xs">{uploadedFile.name}</span>
+                      <button
+                        onClick={() => {
+                          setUploadedFile(null)
+                          setCvSummary(null)
+                          setUploadError(null)
+                          // Reset the file input
+                          const fileInput = document.getElementById('cv-upload') as HTMLInputElement
+                          if (fileInput) fileInput.value = ''
+                        }}
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="size-3"
+                        >
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
+                  {uploadError && (
+                    <p className="text-xs text-destructive">{uploadError}</p>
+                  )}
+                  {cvSummary && !uploadError && (
+                    <div className="rounded-md border border-green-500/20 bg-green-500/10 px-3 py-2">
+                      <p className="text-xs leading-relaxed text-green-700 dark:text-green-400">{cvSummary}</p>
+                    </div>
+                  )}
+                  {!uploadError && !uploadedFile && !isAnalyzing && (
+                    <p className="text-xs text-muted-foreground">
+                      Supports .doc, .docx, .txt, .pdf files (max 10MB)
+                    </p>
+                  )}
+                </div>
               </CardContent>
             </Card>
             <Card>
