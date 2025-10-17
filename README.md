@@ -138,7 +138,7 @@ DATABASE_URL=postgresql://...
 
 # Better Auth
 BETTER_AUTH_SECRET=your-secret-key
-BETTER_AUTH_URL=http://localhost:3000
+BETTER_AUTH_URL=your-deployed-url
 
 # OpenAI
 OPENAI_API_KEY=sk-...
@@ -307,6 +307,167 @@ Despite these potential enhancements, the current implementation demonstrates a 
 ## 📝 License
 
 This project is part of a portfolio/assignment demonstration.
+
+## 🚀 Deployment to Vercel
+
+### Database Setup Options
+
+#### Option 1: Vercel Postgres (Recommended)
+
+1. **Create a Vercel Postgres Database**:
+   - Go to [Vercel Dashboard](https://vercel.com/dashboard)
+   - Navigate to Storage → Create Database → Postgres
+   - Choose your preferred region
+   - Click "Create"
+
+2. **Connect to Your Project**:
+   - After creation, go to the `.env.local` tab
+   - Copy the `POSTGRES_URL` or `DATABASE_URL`
+   - Add it to your project's environment variables in Vercel
+
+3. **Set Environment Variables in Vercel**:
+   ```
+   DATABASE_URL=postgres://...         (from Vercel Postgres)
+   BETTER_AUTH_SECRET=your-secret-key  (generate with: openssl rand -base64 32)
+   BETTER_AUTH_URL=https://your-app.vercel.app
+   OPENAI_API_KEY=sk-...
+   GOOGLE_CLIENT_ID=...                (optional)
+   GOOGLE_CLIENT_SECRET=...            (optional)
+   LINKEDIN_CLIENT_ID=...              (optional)
+   LINKEDIN_CLIENT_SECRET=...          (optional)
+   ```
+
+4. **Run Migrations**:
+   After deployment, run migrations using Vercel CLI or add a build script:
+   ```bash
+   # Using Vercel CLI locally
+   vercel env pull .env.local
+   bun run db:push
+   
+   # Or add to package.json
+   "scripts": {
+     "vercel-build": "bun run db:push && next build"
+   }
+   ```
+
+#### Option 2: Neon (Serverless Postgres)
+
+[Neon](https://neon.tech) offers a generous free tier with serverless PostgreSQL:
+
+1. **Create Account**: Sign up at [neon.tech](https://neon.tech)
+2. **Create Project**: Create a new project and copy the connection string
+3. **Add to Vercel**: Paste the connection string as `DATABASE_URL` in Vercel environment variables
+
+#### Option 3: Supabase
+
+[Supabase](https://supabase.com) provides free PostgreSQL with additional features:
+
+1. **Create Project**: Sign up and create a project at [supabase.com](https://supabase.com)
+2. **Get Connection String**: 
+   - Go to Project Settings → Database
+   - Copy the "Connection string" (URI mode)
+3. **Add to Vercel**: Use as `DATABASE_URL` in environment variables
+
+#### Option 4: Railway
+
+[Railway](https://railway.app) offers easy PostgreSQL deployment:
+
+1. **Create Project**: Sign up at [railway.app](https://railway.app)
+2. **Add PostgreSQL**: Click "New" → "Database" → "PostgreSQL"
+3. **Get Connection String**: Copy from the "Connect" tab
+4. **Add to Vercel**: Use as `DATABASE_URL`
+
+### Deployment Steps
+
+1. **Push Code to GitHub**:
+   ```bash
+   git add .
+   git commit -m "Ready for deployment"
+   git push origin main
+   ```
+
+2. **Import to Vercel**:
+   - Go to [Vercel Dashboard](https://vercel.com/new)
+   - Click "Import Project"
+   - Select your GitHub repository
+   - Click "Import"
+
+3. **Configure Environment Variables**:
+   - In the Vercel import screen, add all environment variables
+   - Make sure to update `BETTER_AUTH_URL` with your Vercel URL
+
+4. **Deploy**:
+   - Click "Deploy"
+   - Wait for build to complete
+   - Your app will be live at `https://your-app.vercel.app`
+
+5. **Update OAuth Redirect URIs**:
+   After deployment, update your OAuth provider settings:
+   
+   **Google OAuth**:
+   - Go to [Google Cloud Console](https://console.cloud.google.com)
+   - Add `https://your-app.vercel.app/api/auth/callback/google` to Authorized redirect URIs
+   
+   **LinkedIn OAuth**:
+   - Go to [LinkedIn Developers](https://www.linkedin.com/developers)
+   - Add `https://your-app.vercel.app/api/auth/callback/linkedin` to Redirect URLs
+
+6. **Run Database Migrations**:
+   ```bash
+   # Install Vercel CLI if not already installed
+   npm i -g vercel
+   
+   # Pull environment variables
+   vercel env pull .env.local
+   
+   # Run migrations (if using Drizzle)
+   bun run db:push
+   
+   # Or use Better Auth CLI
+   npx @better-auth/cli migrate
+   ```
+
+### Post-Deployment Checklist
+
+- ✅ Database connected and migrations run
+- ✅ Environment variables set correctly
+- ✅ OAuth redirect URIs updated
+- ✅ `BETTER_AUTH_URL` points to production domain
+- ✅ Test authentication flows
+- ✅ Test OpenAI features (CV parsing, ATS scoring)
+- ✅ Test PDF download functionality
+
+### Troubleshooting
+
+**Build Errors**:
+- Check build logs in Vercel dashboard
+- Ensure all dependencies are in `package.json`
+- Verify TypeScript compilation succeeds locally
+
+**Database Connection Issues**:
+- Verify `DATABASE_URL` format is correct
+- Check if database allows connections from Vercel's IP addresses
+- For Vercel Postgres, use the provided connection string as-is
+
+**Authentication Issues**:
+- Ensure `BETTER_AUTH_URL` matches your deployed URL
+- Verify OAuth redirect URIs are updated
+- Check that `BETTER_AUTH_SECRET` is set
+
+**API Errors**:
+- Verify `OPENAI_API_KEY` is valid and has credits
+- Check Vercel function logs for detailed error messages
+
+### Cost Considerations
+
+**Free Tier Limits**:
+- **Vercel**: 100GB bandwidth, unlimited deployments
+- **Vercel Postgres**: 256MB storage, 60 hours compute time/month
+- **Neon**: 3GB storage, 1 database
+- **Supabase**: 500MB storage, 50MB file storage
+- **Railway**: $5 free credit/month
+
+For production use, consider upgrading based on traffic and storage needs.
 
 ## 🙏 Acknowledgments
 
