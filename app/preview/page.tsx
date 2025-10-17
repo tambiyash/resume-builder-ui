@@ -29,6 +29,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Separator } from "@/components/ui/separator"
 import { ATSScoreModal } from "@/components/ats-score-modal"
+import { ResumePreviewModal } from "@/components/resume-preview-modal"
+import { generateOptimizedResumePDF } from "@/lib/pdf-generator"
 
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -38,7 +40,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 function ResumePreview({ data }: { data: ResumeData }) {
   // Simple, distinct visual style from Wozber while keeping clear structure
   return (
-    <div className="rounded-lg border bg-card p-6">
+    <div id="resume-preview" className="rounded-lg border bg-card p-6">
       <div className="grid grid-cols-[6px_1fr] gap-4">
         <div className="rounded-sm bg-primary" aria-hidden />
         <div>
@@ -206,6 +208,8 @@ export default function PreviewPage() {
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [cvSummary, setCvSummary] = useState<string | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(false)
+  const [showPreviewModal, setShowPreviewModal] = useState(false)
 
   // Zustand selectors - efficient and split by section
   const personal = usePersonalInfo()
@@ -268,6 +272,25 @@ export default function PreviewPage() {
     }),
     [personal, experience, education, skills, languages, certificates]
   )
+
+  // Handle opening preview modal
+  const handleDownloadClick = () => {
+    setShowPreviewModal(true)
+  }
+
+  // Handle actual PDF download after preview
+  const handleConfirmDownload = async () => {
+    setIsDownloading(true)
+    try {
+      const fileName = `${personal.fullName.replace(/\s+/g, '_')}_Resume.pdf`
+      await generateOptimizedResumePDF('resume-preview-modal', fileName)
+    } catch (error) {
+      console.error('Error downloading PDF:', error)
+      alert('Failed to download PDF. Please try again.')
+    } finally {
+      setIsDownloading(false)
+    }
+  }
 
   // Handle file upload
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -342,6 +365,7 @@ export default function PreviewPage() {
         <div className="mb-6 flex items-center justify-end gap-2">
           <ATSScoreModal 
             resumeData={resumeData}
+            onImproveResume={importResumeData}
             trigger={
               <Button variant="outline" size="sm">
                 <svg
@@ -360,7 +384,43 @@ export default function PreviewPage() {
               </Button>
             }
           />
-          <Button size="sm">Download</Button>
+          <Button size="sm" onClick={handleDownloadClick} disabled={isDownloading}>
+            {isDownloading ? (
+              <>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="mr-2 size-4 animate-spin"
+                >
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                </svg>
+                Downloading...
+              </>
+            ) : (
+              <>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="mr-2 size-4"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" x2="12" y1="15" y2="3" />
+                </svg>
+                Download PDF
+              </>
+            )}
+          </Button>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-12">
@@ -589,7 +649,6 @@ export default function PreviewPage() {
         {/* Right: Tips / Meta */}
         <aside className="lg:col-span-3">
           <div className="grid gap-4">
-            <SidebarTips />
             {/* CV Upload */}
             <Card>
               <CardHeader>
@@ -705,32 +764,163 @@ export default function PreviewPage() {
                 </div>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Document</CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-2 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Pages</span>
-                  <span>1</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Words</span>
-                  <span>
-                    {
-                      [personal.summary, ...experience.flatMap((e) => e.bullets)]
-                        .join(" ")
-                        .split(/\s+/)
-                        .filter(Boolean).length
-                    }
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
+            <SidebarTips />
           </div>
         </aside>
         </div>
       </div>
+
+      {/* Preview Modal */}
+      <ResumePreviewModal
+        open={showPreviewModal}
+        onOpenChange={setShowPreviewModal}
+        resumeData={resumeData}
+        onConfirmDownload={handleConfirmDownload}
+      >
+        <div id="resume-preview-modal" className="rounded-lg bg-white p-6">
+          <div className="grid grid-cols-[6px_1fr] gap-4">
+            <div className="rounded-sm bg-primary" aria-hidden />
+            <div>
+              <h1 className="text-2xl font-semibold leading-tight">{resumeData.personal.fullName}</h1>
+              <p className="text-sm text-muted-foreground">{resumeData.personal.title}</p>
+              
+              {/* Contact Details */}
+              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                {resumeData.personal.email && (
+                  <div className="flex items-center gap-1.5">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="size-3.5"
+                    >
+                      <rect width="20" height="16" x="2" y="4" rx="2" />
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                    </svg>
+                    <span>{resumeData.personal.email}</span>
+                  </div>
+                )}
+                {resumeData.personal.phone && (
+                  <div className="flex items-center gap-1.5">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="size-3.5"
+                    >
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                    <span>{resumeData.personal.phone}</span>
+                  </div>
+                )}
+                {resumeData.personal.location && (
+                  <div className="flex items-center gap-1.5">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="size-3.5"
+                    >
+                      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    <span>{resumeData.personal.location}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <Separator className="my-5" />
+
+          <div className="grid gap-6">
+            <section>
+              <SectionLabel>Summary</SectionLabel>
+              <p className="mt-2 text-sm leading-relaxed">{resumeData.personal.summary}</p>
+            </section>
+
+            <section>
+              <SectionLabel>Experience</SectionLabel>
+              <div className="mt-2 grid gap-4">
+                {resumeData.experience.map((exp, i) => (
+                  <div key={i}>
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <p className="font-medium">
+                        {exp.role} · {exp.company}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {exp.start} – {exp.end}
+                      </p>
+                    </div>
+                    <ul className="mt-1 list-disc pl-5 text-sm">
+                      {exp.bullets.map((b, bi) => (
+                        <li key={bi}>{b}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section>
+              <SectionLabel>Education</SectionLabel>
+              <ul className="mt-2 grid gap-2 text-sm">
+                {resumeData.education.map((ed, i) => (
+                  <li key={i} className="flex items-baseline justify-between gap-2">
+                    <span className="font-medium">
+                      {ed.degree}, {ed.school}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {ed.start} – {ed.end}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section className="grid gap-2">
+              <SectionLabel>Skills</SectionLabel>
+              <div className="flex flex-wrap gap-1.5">
+                {resumeData.skills.map((s, i) => (
+                  <span key={i} className="rounded bg-secondary px-2 py-1 text-xs text-secondary-foreground">
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </section>
+
+            {resumeData.languages.length > 0 && (
+              <section className="grid gap-2">
+                <SectionLabel>Languages</SectionLabel>
+                <p className="text-sm">{resumeData.languages.join(", ")}</p>
+              </section>
+            )}
+
+            {resumeData.certificates.length > 0 && (
+              <section className="grid gap-2">
+                <SectionLabel>Certificates</SectionLabel>
+                <ul className="list-disc pl-5 text-sm">
+                  {resumeData.certificates.map((c, i) => (
+                    <li key={i}>{c}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
+          </div>
+        </div>
+      </ResumePreviewModal>
     </div>
   )
 }
