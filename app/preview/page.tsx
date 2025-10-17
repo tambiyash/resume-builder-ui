@@ -230,8 +230,12 @@ export default function PreviewPage() {
 
   const maybeUseSession = authClient?.useSession?.()
 
-  // Auth protection
+  // Auth protection - TEMPORARILY DISABLED FOR DB ISSUES
   useEffect(() => {
+    // Bypass auth check - allow all users to access without authentication
+    setIsLoading(false)
+    
+    /* COMMENTED OUT - ORIGINAL AUTH CHECK
     if (maybeUseSession) {
       if (!maybeUseSession?.data?.user) {
         router.push("/login")
@@ -239,6 +243,7 @@ export default function PreviewPage() {
         setIsLoading(false)
       }
     }
+    */
   }, [maybeUseSession, router])
 
   // If redirected back from LinkedIn, accept imported data from query param.

@@ -19,8 +19,14 @@ export default function ProfilePage() {
 
   const session = authClient?.useSession?.()
 
-  // Auth protection and data loading
+  // Auth protection and data loading - TEMPORARILY DISABLED FOR DB ISSUES
   useEffect(() => {
+    // Bypass auth check - show default guest profile
+    setName("Guest User")
+    setEmail("guest@example.com")
+    setIsLoading(false)
+    
+    /* COMMENTED OUT - ORIGINAL AUTH CHECK
     if (session) {
       if (!session?.data?.user) {
         router.push("/login")
@@ -30,10 +36,15 @@ export default function ProfilePage() {
         setIsLoading(false)
       }
     }
+    */
   }, [session, router])
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault()
+    // TEMPORARILY DISABLED - Auth is bypassed due to DB issues
+    setErrorMessage("Profile updates are temporarily disabled due to database issues. Please try again later.")
+    
+    /* COMMENTED OUT - ORIGINAL UPDATE LOGIC
     setIsUpdating(true)
     setSuccessMessage(null)
     setErrorMessage(null)
@@ -54,9 +65,10 @@ export default function ProfilePage() {
     } finally {
       setIsUpdating(false)
     }
+    */
   }
 
-  if (isLoading || !session?.data) {
+  if (isLoading) {
     return (
       <div className="flex min-h-[100svh] items-center justify-center">
         <p className="text-muted-foreground">Loading...</p>
@@ -64,8 +76,14 @@ export default function ProfilePage() {
     )
   }
 
-  const user = session.data.user
-  const accounts = session.data.session?.accounts || []
+  // Guest user data when DB is unavailable
+  const user = {
+    name: name,
+    email: email,
+    createdAt: new Date().toISOString(),
+    emailVerified: false,
+  }
+  const accounts: any[] = []
 
   // Determine authentication method
   const hasEmailPassword = user.email && !accounts.length

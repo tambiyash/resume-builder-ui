@@ -1,5 +1,7 @@
 # Resume Builder Studio
 
+### NOTE: After deploying to Vercel I relaised that the Authentication won't work since Postgres Database cnanot be configured directly on Vercel. I will figure out this step later. For now I'm pulling the plug on Authentication using Email-Pwd, Google and Linkedin. Rest of the functionalities will continue to work as is.
+
 A modern, AI-powered resume builder designed to help job seekers create ATS-friendly resumes with intelligent optimization features.
 
 ## 🎯 Approach
