@@ -64,7 +64,7 @@ export function TopNav() {
                 <Link href="/profile" className="block rounded px-2 py-1.5 hover:bg-accent" onClick={() => setMenuOpen(false)}>
                   Profile
                 </Link>
-                <Link href="/settings" className="block rounded px-2 py-1.5 hover:bg-accent" onClick={() => setMenuOpen(false)}>
+                <Link href="/profile" className="block rounded px-2 py-1.5 hover:bg-accent" onClick={() => setMenuOpen(false)}>
                   Settings
                 </Link>
                 <div className="my-1 border-t" />

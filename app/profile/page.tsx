@@ -146,13 +146,6 @@ export default function ProfilePage() {
             <div className="grid gap-2">
               <div className="flex items-center justify-between rounded-lg border p-3">
                 <div className="grid gap-1">
-                  <p className="text-sm font-medium">User ID</p>
-                  <p className="text-xs text-muted-foreground font-mono">{user.id}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between rounded-lg border p-3">
-                <div className="grid gap-1">
                   <p className="text-sm font-medium">Created At</p>
                   <p className="text-xs text-muted-foreground">
                     {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}
