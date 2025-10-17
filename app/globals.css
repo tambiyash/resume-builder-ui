@@ -1,0 +1,243 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+  /* Neutrals */
+  --background: oklch(1 0 0); /* default background */
+  --foreground: oklch(0.145 0 0); /* default foreground */
+  --card: oklch(1 0 0); /* default card */
+  --card-foreground: oklch(0.145 0 0); /* default card foreground */
+  --popover: oklch(1 0 0); /* default popover */
+  --popover-foreground: oklch(0.145 0 0); /* default popover foreground */
+  --primary: oklch(0.205 0 0); /* default primary */
+  --primary-foreground: oklch(0.985 0 0); /* default primary foreground */
+  --secondary: oklch(0.97 0 0); /* default secondary */
+  --secondary-foreground: oklch(0.205 0 0); /* default secondary foreground */
+  --accent: oklch(0.97 0 0); /* default accent */
+  --accent-foreground: oklch(0.205 0 0); /* default accent foreground */
+  --destructive: oklch(0.577 0.245 27.325); /* default destructive */
+  --destructive-foreground: oklch(0.577 0.245 27.325); /* default destructive foreground */
+  --border: oklch(0.922 0 0); /* default border */
+  --input: oklch(0.922 0 0); /* default input */
+  --ring: oklch(0.708 0 0); /* default ring */
+  --chart-1: oklch(0.646 0.222 41.116); /* default chart 1 */
+  --chart-2: oklch(0.6 0.118 184.704); /* default chart 2 */
+  --chart-3: oklch(0.398 0.07 227.392); /* default chart 3 */
+  --chart-4: oklch(0.828 0.189 84.429); /* default chart 4 */
+  --chart-5: oklch(0.769 0.188 70.08); /* default chart 5 */
+  --radius: 0.625rem; /* default radius */
+  --sidebar: oklch(0.985 0 0); /* default sidebar */
+  --sidebar-foreground: oklch(0.145 0 0); /* default sidebar foreground */
+  --sidebar-primary: oklch(0.205 0 0); /* default sidebar primary */
+  --sidebar-primary-foreground: oklch(0.985 0 0); /* default sidebar primary foreground */
+  --sidebar-accent: oklch(0.97 0 0); /* default sidebar accent */
+  --sidebar-accent-foreground: oklch(0.205 0 0); /* default sidebar accent foreground */
+  --sidebar-border: oklch(0.922 0 0); /* default sidebar border */
+  --sidebar-ring: oklch(0.708 0 0); /* default sidebar ring */
+
+  /* Pastel theme variant */
+  --pastel-background: oklch(0.97 0.02 90); /* pastel beige */
+  --pastel-foreground: oklch(0.22 0 0); /* charcoal */
+  --pastel-card: oklch(0.985 0.015 90); /* light beige card */
+  --pastel-primary: oklch(0.82 0.08 285); /* purplish hue */
+  --pastel-secondary: oklch(0.9 0.01 0); /* silver */
+  --pastel-accent: oklch(0.88 0.06 290); /* lavender accent */
+  --pastel-destructive: oklch(0.62 0.2 25); /* warm red for destructive (out of main palette, used rarely) */
+  --pastel-border: oklch(0.88 0.008 90); /* soft silver border */
+  --pastel-ring: oklch(0.74 0.06 285); /* subtle purple ring */
+  --pastel-muted: oklch(0.93 0.008 90); /* light silver-beige */
+  --pastel-muted-foreground: oklch(0.42 0.01 270); /* mid gray text */
+  --pastel-destructive-foreground: oklch(0.99 0 0);
+}
+
+.dark {
+  /* Neutrals */
+  --background: oklch(0.145 0 0); /* default dark background */
+  --foreground: oklch(0.985 0 0); /* default dark foreground */
+  --card: oklch(0.145 0 0); /* default dark card */
+  --card-foreground: oklch(0.985 0 0); /* default dark card foreground */
+  --popover: oklch(0.145 0 0); /* default dark popover */
+  --popover-foreground: oklch(0.985 0 0); /* default dark popover foreground */
+  --primary: oklch(0.985 0 0); /* default dark primary */
+  --primary-foreground: oklch(0.205 0 0); /* default dark primary foreground */
+  --secondary: oklch(0.269 0 0); /* default dark secondary */
+  --secondary-foreground: oklch(0.985 0 0); /* default dark secondary foreground */
+  --accent: oklch(0.269 0 0); /* default dark accent */
+  --accent-foreground: oklch(0.985 0 0); /* default dark accent foreground */
+  --destructive: oklch(0.396 0.141 25.723); /* default dark destructive */
+  --destructive-foreground: oklch(0.637 0.237 25.331); /* default dark destructive foreground */
+  --border: oklch(0.269 0 0); /* default dark border */
+  --input: oklch(0.269 0 0); /* default dark input */
+  --ring: oklch(0.439 0 0); /* default dark ring */
+  --chart-1: oklch(0.488 0.243 264.376); /* default dark chart 1 */
+  --chart-2: oklch(0.696 0.17 162.48); /* default dark chart 2 */
+  --chart-3: oklch(0.769 0.188 70.08); /* default dark chart 3 */
+  --chart-4: oklch(0.627 0.265 303.9); /* default dark chart 4 */
+  --chart-5: oklch(0.645 0.246 16.439); /* default dark chart 5 */
+  --sidebar: oklch(0.205 0 0); /* default dark sidebar */
+  --sidebar-foreground: oklch(0.985 0 0); /* default dark sidebar foreground */
+  --sidebar-primary: oklch(0.488 0.243 264.376); /* default dark sidebar primary */
+  --sidebar-primary-foreground: oklch(0.985 0 0); /* default dark sidebar primary foreground */
+  --sidebar-accent: oklch(0.269 0 0); /* default dark sidebar accent */
+  --sidebar-accent-foreground: oklch(0.985 0 0); /* default dark sidebar accent foreground */
+  --sidebar-border: oklch(0.269 0 0); /* default dark sidebar border */
+  --sidebar-ring: oklch(0.439 0 0); /* default dark sidebar ring */
+
+  /* Pastel theme variant in dark mode */
+  --pastel-background: oklch(0.2 0.02 275); /* deep neutral with a hint of purple */
+  --pastel-foreground: oklch(0.96 0.01 0); /* near-white */
+  --pastel-card: oklch(0.22 0.02 275);
+  --pastel-primary: oklch(0.85 0.08 285); /* bright lavender for dark */
+  --pastel-secondary: oklch(0.3 0.01 270); /* dark silver */
+  --pastel-accent: oklch(0.78 0.06 290); /* lavender accent toned for dark */
+  --pastel-destructive: oklch(0.5 0.15 25);
+  --pastel-border: oklch(0.32 0.01 270);
+  --pastel-ring: oklch(0.68 0.08 285);
+  --pastel-muted: oklch(0.28 0.01 270);
+  --pastel-muted-foreground: oklch(0.74 0.02 270);
+  --pastel-destructive-foreground: oklch(0.98 0 0);
+}
+
+@theme inline {
+  /* optional: --font-sans, --font-serif, --font-mono if they are applied in the layout.tsx */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.theme-pastel {
+  /* Neutrals */
+  --background: var(--pastel-background); /* pastel beige */
+  --foreground: var(--pastel-foreground); /* charcoal */
+  --card: var(--pastel-card); /* light beige card */
+  --card-foreground: var(--pastel-foreground);
+  --popover: var(--pastel-card);
+  --popover-foreground: var(--pastel-foreground);
+
+  /* Brand + Accents */
+  --primary: var(--pastel-primary); /* purplish hue */
+  --primary-foreground: var(--pastel-primary-foreground); /* near-white for contrast */
+  --secondary: var(--pastel-secondary); /* silver */
+  --secondary-foreground: var(--pastel-foreground);
+  --accent: var(--pastel-accent); /* lavender accent */
+  --accent-foreground: var(--pastel-foreground);
+
+  /* UI surfaces */
+  --muted: var(--pastel-muted); /* light silver-beige */
+  --muted-foreground: var(--pastel-muted-foreground); /* mid gray text */
+  --destructive: var(--pastel-destructive); /* warm red for destructive (out of main palette, used rarely) */
+  --destructive-foreground: var(--pastel-destructive-foreground);
+
+  /* Controls */
+  --border: var(--pastel-border); /* soft silver border */
+  --input: var(--pastel-border);
+  --ring: var(--pastel-ring); /* subtle purple ring */
+
+  /* Charts (derived from palette) */
+  --chart-1: var(--pastel-primary); /* purple */
+  --chart-2: var(--pastel-accent); /* lavender */
+  --chart-3: var(--pastel-secondary); /* silver */
+  --chart-4: var(--pastel-card); /* beige */
+  --chart-5: var(--pastel-foreground); /* charcoal mid */
+
+  /* Radius unchanged */
+  /* Sidebar derived */
+  --sidebar: var(--pastel-card);
+  --sidebar-foreground: var(--pastel-foreground);
+  --sidebar-primary: var(--pastel-primary);
+  --sidebar-primary-foreground: var(--pastel-primary-foreground);
+  --sidebar-accent: var(--pastel-muted);
+  --sidebar-accent-foreground: var(--pastel-foreground);
+  --sidebar-border: var(--pastel-border);
+  --sidebar-ring: var(--pastel-ring);
+}
+
+.dark.theme-pastel {
+  /* Neutrals */
+  --background: var(--pastel-background); /* deep neutral with a hint of purple */
+  --foreground: var(--pastel-foreground); /* near-white */
+  --card: var(--pastel-card);
+  --card-foreground: var(--pastel-foreground);
+  --popover: var(--pastel-card);
+  --popover-foreground: var(--pastel-foreground);
+
+  /* Brand + Accents */
+  --primary: var(--pastel-primary); /* bright lavender for dark */
+  --primary-foreground: var(--pastel-primary-foreground);
+  --secondary: var(--pastel-secondary); /* dark silver */
+  --secondary-foreground: var(--pastel-foreground);
+  --accent: var(--pastel-accent); /* lavender accent toned for dark */
+  --accent-foreground: var(--pastel-accent-foreground);
+
+  /* UI surfaces */
+  --muted: var(--pastel-muted);
+  --muted-foreground: var(--pastel-muted-foreground);
+
+  --destructive: var(--pastel-destructive);
+  --destructive-foreground: var(--pastel-destructive-foreground);
+
+  /* Controls */
+  --border: var(--pastel-border);
+  --input: var(--pastel-border);
+  --ring: var(--pastel-ring);
+
+  /* Charts (derived from palette) */
+  --chart-1: var(--pastel-primary);
+  --chart-2: var(--pastel-accent);
+  --chart-3: var(--pastel-secondary);
+  --chart-4: var(--pastel-card);
+  --chart-5: var(--pastel-foreground);
+
+  /* Radius unchanged */
+  /* Sidebar derived */
+  --sidebar: var(--pastel-card);
+  --sidebar-foreground: var(--pastel-foreground);
+  --sidebar-primary: var(--pastel-primary);
+  --sidebar-primary-foreground: var(--pastel-primary-foreground);
+  --sidebar-accent: var(--pastel-muted);
+  --sidebar-accent-foreground: var(--pastel-foreground);
+  --sidebar-border: var(--pastel-border);
+  --sidebar-ring: var(--pastel-ring);
+}
