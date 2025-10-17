@@ -18,11 +18,25 @@ export default function LoginPage() {
     setError(null)
     setLoading(true)
     try {
-      await authClient.signIn.email({ email, password })
-      window.location.assign("/")
+      const result = await authClient.signIn.email({ 
+        email, 
+        password,
+        callbackURL: "/"
+      })
+      
+      // Check if there's an error in the response
+      if (result?.error) {
+        setError(result.error.message ?? "Login failed")
+        setLoading(false)
+        return
+      }
+      
+      // Only redirect if login was successful
+      if (result?.data) {
+        window.location.assign("/")
+      }
     } catch (err: any) {
       setError(err?.message ?? "Login failed")
-    } finally {
       setLoading(false)
     }
   }

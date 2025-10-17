@@ -19,6 +19,15 @@ export function TopNav() {
     }
   }, [maybeUseSession])
 
+  async function handleSignOut() {
+    try {
+      await authClient.signOut()
+      window.location.assign("/login")
+    } catch (err) {
+      console.error("Sign out failed:", err)
+    }
+  }
+
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
       if (!menuRef.current) return
@@ -44,12 +53,12 @@ export function TopNav() {
           </div>
         ) : (
           <div className="relative" ref={menuRef}>
-            <Button variant="outline" size="icon" onClick={() => setMenuOpen((v) => !v)} aria-haspopup="menu" aria-expanded={menuOpen}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-5">
-                <path d="M20 21a8 8 0 0 0-16 0" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            </Button>
+              <Button variant="outline" size="icon" onClick={() => setMenuOpen((v) => !v)} aria-haspopup="menu" aria-expanded={menuOpen}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-5">
+                  <path d="M20 21a8 8 0 0 0-16 0" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </Button>
             {menuOpen && (
               <div role="menu" className="absolute right-0 z-20 mt-2 w-40 rounded-md border bg-popover p-1 text-sm shadow-md">
                 <Link href="/profile" className="block rounded px-2 py-1.5 hover:bg-accent" onClick={() => setMenuOpen(false)}>
@@ -58,6 +67,13 @@ export function TopNav() {
                 <Link href="/settings" className="block rounded px-2 py-1.5 hover:bg-accent" onClick={() => setMenuOpen(false)}>
                   Settings
                 </Link>
+                <div className="my-1 border-t" />
+                <button
+                  onClick={handleSignOut}
+                  className="block w-full rounded px-2 py-1.5 text-left hover:bg-accent"
+                >
+                  Sign out
+                </button>
               </div>
             )}
           </div>
