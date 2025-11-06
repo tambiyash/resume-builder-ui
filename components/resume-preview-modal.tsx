@@ -49,7 +49,7 @@ export function ResumePreviewModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[900px] min-w-[850px] max-h-[95vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-[900px] min-w-[800px] max-h-[95vh] overflow-hidden flex flex-col">
         <DialogHeader className="flex-shrink-0">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">

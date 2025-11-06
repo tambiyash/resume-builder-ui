@@ -146,7 +146,7 @@ export function ATSScoreModal({ resumeData, trigger, onImproveResume }: ATSScore
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto min-w-[800px]">
         <DialogHeader>
           <DialogTitle>ATS Score Calculator</DialogTitle>
           <DialogDescription>
@@ -368,7 +368,7 @@ export function ATSScoreModal({ resumeData, trigger, onImproveResume }: ATSScore
                       {analysis.keywordMatch.matched.map((keyword, i) => (
                         <span
                           key={i}
-                          className="rounded bg-green-100 px-2 py-1 text-xs text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                          className="rounded bg-green-600 px-2 py-1 text-xs text-white"
                         >
                           {keyword}
                         </span>
@@ -383,7 +383,7 @@ export function ATSScoreModal({ resumeData, trigger, onImproveResume }: ATSScore
                       {analysis.keywordMatch.missing.map((keyword, i) => (
                         <span
                           key={i}
-                          className="rounded bg-red-100 px-2 py-1 text-xs text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                          className="rounded bg-red-600 px-2 py-1 text-xs text-white"
                         >
                           {keyword}
                         </span>

@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
@@ -50,7 +51,16 @@ export function TopNav() {
   return (
     <nav className="border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link href="/" className="font-medium">Resume Builder Studio</Link>
+        <Link href="/" className="flex items-center gap-2">
+          <Image 
+            src="/resume-builder logo.jpg" 
+            alt="Resume Builder Studio" 
+            width={40} 
+            height={40}
+            className="rounded-md"
+          />
+          <span className="font-semibold text-lg">Resume Builder Studio</span>
+        </Link>
 
         {/* {!isAuthenticated ? (
           <div className="flex items-center gap-3">

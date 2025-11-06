@@ -398,12 +398,60 @@ export default function PreviewPage() {
     <div className="min-h-[100svh]">
       <div className="mx-auto max-w-[1600px] px-6 py-6">
         {/* Top actions bar */}
-        <div className="mb-6 flex items-center justify-end gap-2">
-          <ATSScoreModal 
-            resumeData={resumeData}
-            onImproveResume={importResumeData}
-            trigger={
-              <Button variant="outline" size="sm">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          {/* CV Upload Section */}
+          <div className="flex items-center gap-2">
+            <input
+              type="file"
+              id="cv-upload"
+              accept=".doc,.docx,.txt,.pdf"
+              className="hidden"
+              onChange={handleFileUpload}
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => document.getElementById("cv-upload")?.click()}
+              disabled={isAnalyzing}
+            >
+              {isAnalyzing ? (
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="mr-2 size-4 animate-spin"
+                  >
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                  </svg>
+                  Analyzing CV...
+                </>
+              ) : (
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="mr-2 size-4"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg>
+                  Upload Resume
+                </>
+              )}
+            </Button>
+            {uploadedFile && (
+              <div className="flex items-center gap-2 rounded-md border bg-muted/50 px-3 py-1.5">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -412,52 +460,116 @@ export default function PreviewPage() {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="mr-2 size-4"
+                  className="size-3.5 text-muted-foreground"
                 >
-                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                  <polyline points="14 2 14 8 20 8" />
                 </svg>
-                ATS Score
-              </Button>
-            }
-          />
-          <Button size="sm" onClick={handleDownloadClick} disabled={isDownloading}>
-            {isDownloading ? (
-              <>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="mr-2 size-4 animate-spin"
+                <span className="text-xs max-w-[200px] truncate">{uploadedFile.name}</span>
+                <button
+                  onClick={() => {
+                    setUploadedFile(null)
+                    setCvSummary(null)
+                    setUploadError(null)
+                    const fileInput = document.getElementById('cv-upload') as HTMLInputElement
+                    if (fileInput) fileInput.value = ''
+                  }}
+                  className="text-muted-foreground hover:text-foreground"
                 >
-                  <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                </svg>
-                Downloading...
-              </>
-            ) : (
-              <>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="mr-2 size-4"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" x2="12" y1="15" y2="3" />
-                </svg>
-                Preview & Download
-              </>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="size-3"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
             )}
-          </Button>
+            {uploadError && (
+              <span className="text-xs text-destructive">{uploadError}</span>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2">
+            <ATSScoreModal 
+              resumeData={resumeData}
+              onImproveResume={importResumeData}
+              trigger={
+                <Button variant="outline" size="sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="mr-2 size-4"
+                  >
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                  </svg>
+                  Review ATS Score
+                </Button>
+              }
+            />
+            <Button size="sm" onClick={handleDownloadClick} disabled={isDownloading}>
+              {isDownloading ? (
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="mr-2 size-4 animate-spin"
+                  >
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                  </svg>
+                  Downloading...
+                </>
+              ) : (
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="mr-2 size-4"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" x2="12" y1="15" y2="3" />
+                  </svg>
+                  Preview & Download
+                </>
+              )}
+            </Button>
+          </div>
         </div>
+
+        {/* CV Upload Success/Error Messages */}
+        {(cvSummary || uploadError) && (
+          <div className="mb-4">
+            {cvSummary && !uploadError && (
+              <div className="rounded-md border border-green-500/20 bg-green-500/10 px-4 py-3">
+                <p className="text-sm leading-relaxed text-green-700 dark:text-green-400">{cvSummary}</p>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="grid gap-6 lg:grid-cols-12">
         {/* Left: Live Preview */}
@@ -970,122 +1082,6 @@ export default function PreviewPage() {
                     <p className="text-xs leading-relaxed text-green-700 dark:text-green-400">{improveSuccess}</p>
                   </div>
                 )}
-              </CardContent>
-            </Card>
-
-            {/* CV Upload */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Elevate Your Old Resume with AI</CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-2">
-                <div className="grid gap-2">
-                  <input
-                    type="file"
-                    id="cv-upload"
-                    accept=".doc,.docx,.txt,.pdf"
-                    className="hidden"
-                    onChange={handleFileUpload}
-                  />
-                  <Button
-                    variant="outline"
-                    onClick={() => document.getElementById("cv-upload")?.click()}
-                    className="flex items-center gap-2"
-                    disabled={isAnalyzing}
-                  >
-                    {isAnalyzing ? (
-                      <>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="size-4 animate-spin"
-                        >
-                          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                        </svg>
-                        <span>Analyzing...</span>
-                      </>
-                    ) : (
-                      <>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="size-4"
-                        >
-                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                          <polyline points="17 8 12 3 7 8" />
-                          <line x1="12" y1="3" x2="12" y2="15" />
-                        </svg>
-                        <span>Choose File</span>
-                      </>
-                    )}
-                  </Button>
-                  {uploadedFile && (
-                    <div className="flex items-center gap-2 rounded-md border border-border bg-muted/50 px-3 py-2">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="size-4 text-muted-foreground"
-                      >
-                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-                        <polyline points="14 2 14 8 20 8" />
-                      </svg>
-                      <span className="flex-1 truncate text-xs">{uploadedFile.name}</span>
-                      <button
-                        onClick={() => {
-                          setUploadedFile(null)
-                          setCvSummary(null)
-                          setUploadError(null)
-                          // Reset the file input
-                          const fileInput = document.getElementById('cv-upload') as HTMLInputElement
-                          if (fileInput) fileInput.value = ''
-                        }}
-                        className="text-muted-foreground hover:text-foreground"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="size-3"
-                        >
-                          <line x1="18" y1="6" x2="6" y2="18" />
-                          <line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
-                      </button>
-                    </div>
-                  )}
-                  {uploadError && (
-                    <p className="text-xs text-destructive">{uploadError}</p>
-                  )}
-                  {cvSummary && !uploadError && (
-                    <div className="rounded-md border border-green-500/20 bg-green-500/10 px-3 py-2">
-                      <p className="text-xs leading-relaxed text-green-700 dark:text-green-400">{cvSummary}</p>
-                    </div>
-                  )}
-                  {!uploadError && !uploadedFile && !isAnalyzing && (
-                    <p className="text-xs text-muted-foreground">
-                      Supports .doc, .docx, .txt, .pdf files (max 10MB)
-                    </p>
-                  )}
-                </div>
               </CardContent>
             </Card>
             <SidebarTips />
