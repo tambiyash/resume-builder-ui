@@ -94,7 +94,7 @@ export default function LandingPage() {
     <main>
       {/* Hero */}
       <section className="relative">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
           <div className="grid gap-8 md:grid-cols-2 md:items-center">
             <div className="space-y-5">
               <h1 className="text-pretty text-4xl font-semibold tracking-tight sm:text-5xl">
@@ -128,7 +128,7 @@ export default function LandingPage() {
 
       {/* Templates */}
       <section id="templates" className="border-t bg-muted/20">
-        <div className="mx-auto max-w-6xl px-4 py-14">
+        <div className="mx-auto max-w-7xl px-6 py-14">
           <header className="mb-6 flex items-end justify-between gap-4">
             <div>
               <h2 className="text-balance text-2xl font-semibold">ATS‑Friendly Templates</h2>
@@ -149,7 +149,7 @@ export default function LandingPage() {
 
       {/* CTA */}
       <section className="border-t">
-        <div className="mx-auto max-w-6xl px-4 py-14">
+        <div className="mx-auto max-w-7xl px-6 py-14">
           <div className="rounded-xl border bg-card px-6 py-10 text-center">
             <h3 className="text-pretty text-2xl font-semibold">Ready to craft your next step?</h3>
             <p className="mx-auto mt-2 max-w-2xl text-pretty text-muted-foreground">

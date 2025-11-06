@@ -34,100 +34,75 @@ import { generateOptimizedResumePDF } from "@/lib/pdf-generator"
 
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <h3 className="text-sm font-medium tracking-wide text-muted-foreground">{children}</h3>
+  return <h3 className="text-sm font-bold uppercase tracking-wide text-foreground border-b border-foreground pb-1">{children}</h3>
 }
 
 function ResumePreview({ data }: { data: ResumeData }) {
-  // Simple, distinct visual style from Wozber while keeping clear structure
+  // Readable preview layout - PDF will use compact ATS-optimized formatting
   return (
-    <div id="resume-preview" className="rounded-lg border bg-card p-6">
-      <div className="grid grid-cols-[6px_1fr] gap-4">
-        <div className="rounded-sm bg-primary" aria-hidden />
-        <div>
-          <h1 className="text-2xl font-semibold leading-tight">{data.personal.fullName}</h1>
-          <p className="text-sm text-muted-foreground">{data.personal.title}</p>
-          
-          {/* Contact Details */}
-          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-            {data.personal.email && (
-              <div className="flex items-center gap-1.5">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="size-3.5"
-                >
-                  <rect width="20" height="16" x="2" y="4" rx="2" />
-                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                </svg>
-                <span>{data.personal.email}</span>
-              </div>
-            )}
-            {data.personal.phone && (
-              <div className="flex items-center gap-1.5">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="size-3.5"
-                >
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                </svg>
-                <span>{data.personal.phone}</span>
-              </div>
-            )}
-            {data.personal.location && (
-              <div className="flex items-center gap-1.5">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="size-3.5"
-                >
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-                <span>{data.personal.location}</span>
-              </div>
-            )}
-          </div>
+    <div id="resume-preview" className="rounded-lg border bg-white p-6 text-black">
+      {/* Header - Centered */}
+      <div className="text-center border-b-2 border-black pb-4 mb-5">
+        <h1 className="text-3xl font-bold leading-tight uppercase tracking-wide">{data.personal.fullName}</h1>
+        <p className="text-lg font-medium mt-2 mb-3">{data.personal.title}</p>
+        
+        {/* Contact Details - Horizontal layout */}
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm">
+          {data.personal.email && (
+            <div className="flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4">
+                <rect width="20" height="16" x="2" y="4" rx="2" />
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+              </svg>
+              <span>{data.personal.email}</span>
+            </div>
+          )}
+          {data.personal.phone && (
+            <div className="flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
+              <span>{data.personal.phone}</span>
+            </div>
+          )}
+          {data.personal.location && (
+            <div className="flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <span>{data.personal.location}</span>
+            </div>
+          )}
         </div>
       </div>
 
-      <Separator className="my-5" />
+      {/* Content sections */}
+      <div className="grid gap-5">
+        {/* Summary */}
+        {data.personal.summary && (
+          <section>
+            <SectionLabel>Professional Summary</SectionLabel>
+            <p className="mt-2 text-sm leading-relaxed">{data.personal.summary}</p>
+          </section>
+        )}
 
-      <div className="grid gap-6">
+        {/* Experience */}
         <section>
-          <SectionLabel>Summary</SectionLabel>
-          <p className="mt-2 text-sm leading-relaxed">{data.personal.summary}</p>
-        </section>
-
-        <section>
-          <SectionLabel>Experience</SectionLabel>
-          <div className="mt-2 grid gap-4">
+          <SectionLabel>Work Experience</SectionLabel>
+          <div className="mt-3 grid gap-4">
             {data.experience.map((exp, i) => (
               <div key={i}>
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <p className="font-medium">
-                    {exp.role} · {exp.company}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1">
+                    <p className="text-base font-bold leading-tight">{exp.company}</p>
+                    <p className="text-sm font-medium italic mt-0.5">{exp.role}</p>
+                  </div>
+                  <p className="text-xs font-medium whitespace-nowrap text-muted-foreground">
                     {exp.start} – {exp.end}
                   </p>
                 </div>
-                <ul className="mt-1 list-disc pl-5 text-sm">
+                <ul className="mt-2 list-disc pl-5 text-sm leading-relaxed space-y-1">
                   {exp.bullets.map((b, bi) => (
                     <li key={bi}>{b}</li>
                   ))}
@@ -137,44 +112,53 @@ function ResumePreview({ data }: { data: ResumeData }) {
           </div>
         </section>
 
+        {/* Education */}
         <section>
           <SectionLabel>Education</SectionLabel>
-          <ul className="mt-2 grid gap-2 text-sm">
+          <div className="mt-3 grid gap-3">
             {data.education.map((ed, i) => (
-              <li key={i} className="flex items-baseline justify-between gap-2">
-                <span className="font-medium">
-                  {ed.degree}, {ed.school}
-                </span>
-                <span className="text-xs text-muted-foreground">
+              <div key={i} className="flex items-start justify-between gap-2">
+                <div className="flex-1">
+                  <p className="text-base font-bold leading-tight">{ed.school}</p>
+                  <p className="text-sm mt-0.5">{ed.degree}</p>
+                </div>
+                <p className="text-xs font-medium whitespace-nowrap text-muted-foreground">
                   {ed.start} – {ed.end}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="grid gap-2">
-          <SectionLabel>Skills</SectionLabel>
-          <div className="flex flex-wrap gap-1.5">
-            {data.skills.map((s, i) => (
-              <span key={i} className="rounded bg-secondary px-2 py-1 text-xs text-secondary-foreground">
-                {s}
-              </span>
+                </p>
+              </div>
             ))}
           </div>
         </section>
 
-        {data.languages.length > 0 && (
-          <section className="grid gap-2">
-            <SectionLabel>Languages</SectionLabel>
-            <p className="text-sm">{data.languages.join(", ")}</p>
+        {/* Skills */}
+        {data.skills.filter(cat => cat.skills.length > 0).length > 0 && (
+          <section>
+            <SectionLabel>Skills</SectionLabel>
+            <div className="mt-2 space-y-1">
+              {data.skills
+                .filter(cat => cat.skills.length > 0)
+                .map((category, i) => (
+                  <p key={i} className="text-sm leading-relaxed">
+                    <span className="font-bold">{category.name}:</span> {category.skills.join(", ")}
+                  </p>
+                ))}
+            </div>
           </section>
         )}
 
+        {/* Languages */}
+        {data.languages.length > 0 && (
+          <section>
+            <SectionLabel>Languages</SectionLabel>
+            <p className="mt-2 text-sm leading-relaxed">{data.languages.join(" • ")}</p>
+          </section>
+        )}
+
+        {/* Certificates/Achievements */}
         {data.certificates.length > 0 && (
-          <section className="grid gap-2">
-            <SectionLabel>Certificates</SectionLabel>
-            <ul className="list-disc pl-5 text-sm">
+          <section>
+            <SectionLabel>Achievement</SectionLabel>
+            <ul className="mt-2 list-disc pl-5 text-sm leading-relaxed space-y-1">
               {data.certificates.map((c, i) => (
                 <li key={i}>{c}</li>
               ))}
@@ -190,12 +174,13 @@ function SidebarTips() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Suggestions</CardTitle>
+        <CardTitle className="text-base">ATS Optimization Tips</CardTitle>
       </CardHeader>
       <CardContent className="grid gap-3 text-sm text-muted-foreground">
-        <p>Keep section titles simple: Experience, Education, Skills.</p>
-        <p>Use action verbs and quantify outcomes where possible.</p>
-        <p>Prioritize readability with concise bullet points.</p>
+        <p><strong>Action Verbs:</strong> Start every bullet with Led, Developed, Managed, Optimized, etc.</p>
+        <p><strong>Quantify Results:</strong> Include numbers and metrics (e.g., "increased by 25%").</p>
+        <p><strong>Concise Summary:</strong> Keep it 25-30 words, 2 sentences, based on your current role.</p>
+        <p><strong>One Page:</strong> Aim to fit all content on a single page for maximum impact.</p>
       </CardContent>
     </Card>
   )
@@ -210,6 +195,10 @@ export default function PreviewPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [isDownloading, setIsDownloading] = useState(false)
   const [showPreviewModal, setShowPreviewModal] = useState(false)
+  const [improveInstructions, setImproveInstructions] = useState('')
+  const [isImproving, setIsImproving] = useState(false)
+  const [improveError, setImproveError] = useState<string | null>(null)
+  const [improveSuccess, setImproveSuccess] = useState<string | null>(null)
 
   // Zustand selectors - efficient and split by section
   const personal = usePersonalInfo()
@@ -221,9 +210,9 @@ export default function PreviewPage() {
 
   // Actions
   const { setPersonalField } = usePersonalActions()
-  const { updateExperience } = useExperienceActions()
-  const { updateEducation } = useEducationActions()
-  const { setSkills: updateSkills } = useSkillsActions()
+  const { updateExperience, addExperience, removeExperience } = useExperienceActions()
+  const { updateEducation, addEducation, removeEducation } = useEducationActions()
+  const { updateSkillCategory, addSkillCategory, removeSkillCategory } = useSkillsActions()
   const { setLanguages: updateLanguages } = useLanguagesActions()
   const { setCertificates: updateCertificates } = useCertificatesActions()
   const { importResumeData } = useImportActions()
@@ -263,7 +252,7 @@ export default function PreviewPage() {
     }
   }, [importResumeData])
 
-  const skillsString = useMemo(() => skills.join(", "), [skills])
+  // No longer needed - skills are now categorized
   
   // Aggregate data for preview component
   const resumeData: ResumeData = useMemo(
@@ -288,12 +277,54 @@ export default function PreviewPage() {
     setIsDownloading(true)
     try {
       const fileName = `${personal.fullName.replace(/\s+/g, '_')}_Resume.pdf`
-      await generateOptimizedResumePDF('resume-preview-modal', fileName)
+      await generateOptimizedResumePDF(resumeData, fileName)
     } catch (error) {
       console.error('Error downloading PDF:', error)
       alert('Failed to download PDF. Please try again.')
     } finally {
       setIsDownloading(false)
+    }
+  }
+
+  // Handle improve resume
+  const handleImproveResume = async () => {
+    if (!improveInstructions.trim()) {
+      setImproveError('Please enter your improvement instructions')
+      return
+    }
+
+    setImproveError(null)
+    setImproveSuccess(null)
+    setIsImproving(true)
+
+    try {
+      const response = await fetch('/api/improve-resume', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          resumeData,
+          instructions: improveInstructions,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to improve resume')
+      }
+
+      // Import the improved data into Zustand store
+      if (result.data) {
+        importResumeData(result.data)
+        setImproveSuccess('Resume improved successfully!')
+        setImproveInstructions('')
+      }
+    } catch (err: any) {
+      setImproveError(err.message || 'Failed to improve resume')
+    } finally {
+      setIsImproving(false)
     }
   }
 
@@ -365,7 +396,7 @@ export default function PreviewPage() {
 
   return (
     <div className="min-h-[100svh]">
-      <div className="mx-auto max-w-6xl px-4 py-6">
+      <div className="mx-auto max-w-[1600px] px-6 py-6">
         {/* Top actions bar */}
         <div className="mb-6 flex items-center justify-end gap-2">
           <ATSScoreModal 
@@ -422,7 +453,7 @@ export default function PreviewPage() {
                   <polyline points="7 10 12 15 17 10" />
                   <line x1="12" x2="12" y1="15" y2="3" />
                 </svg>
-                Download PDF
+                Preview & Download
               </>
             )}
           </Button>
@@ -430,14 +461,14 @@ export default function PreviewPage() {
 
         <div className="grid gap-6 lg:grid-cols-12">
         {/* Left: Live Preview */}
-        <aside className="lg:col-span-4">
+        <aside className="lg:col-span-4 xl:col-span-4">
           <div className="lg:sticky lg:top-[72px]">
             <ResumePreview data={resumeData} />
           </div>
         </aside>
 
         {/* Center: Editor */}
-        <section className="lg:col-span-5">
+        <section className="lg:col-span-5 xl:col-span-5">
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Resume</CardTitle>
@@ -498,12 +529,57 @@ export default function PreviewPage() {
                 </AccordionItem>
 
                 <AccordionItem value="experience">
-                  <AccordionTrigger>Experience</AccordionTrigger>
+                  <AccordionTrigger>Experience ({experience.length})</AccordionTrigger>
                   <AccordionContent>
                     <div className="grid gap-6">
                       {experience.map((exp, idx) => (
-                        <div key={idx} className="rounded-md border p-3">
-                          <div className="grid gap-2 md:grid-cols-2">
+                        <div key={idx} className="rounded-md border p-3 relative">
+                          {/* Action buttons */}
+                          <div className="absolute top-2 right-2 flex gap-1">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0"
+                              onClick={() => {
+                                addExperience({
+                                  company: exp.company,
+                                  role: exp.role,
+                                  start: exp.start,
+                                  end: exp.end,
+                                  bullets: [...exp.bullets]
+                                })
+                              }}
+                              title="Duplicate"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-3.5">
+                                <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                              </svg>
+                            </Button>
+                            {experience.length > 1 && (
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                                onClick={() => {
+                                  if (confirm('Are you sure you want to delete this experience?')) {
+                                    removeExperience(idx)
+                                  }
+                                }}
+                                title="Delete"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-3.5">
+                                  <path d="M3 6h18" />
+                                  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                                  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                                </svg>
+                              </Button>
+                            )}
+                          </div>
+
+                          <div className="grid gap-2 md:grid-cols-2 pr-16">
                             <div className="grid gap-1.5">
                               <label className="text-sm">Role</label>
                               <Input
@@ -543,66 +619,238 @@ export default function PreviewPage() {
                           </div>
                         </div>
                       ))}
+                      
+                      {/* Add new experience button */}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => {
+                          addExperience({
+                            company: "",
+                            role: "",
+                            start: "",
+                            end: "Present",
+                            bullets: [""]
+                          })
+                        }}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 size-4">
+                          <path d="M5 12h14" />
+                          <path d="M12 5v14" />
+                        </svg>
+                        Add Experience
+                      </Button>
                     </div>
                   </AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem value="education">
-                  <AccordionTrigger>Education</AccordionTrigger>
+                  <AccordionTrigger>Education ({education.length})</AccordionTrigger>
                   <AccordionContent>
                     <div className="grid gap-4">
                       {education.map((ed, idx) => (
-                        <div key={idx} className="grid gap-2 md:grid-cols-2">
-                          <div className="grid gap-1.5">
-                            <label className="text-sm">School</label>
-                            <Input
-                              value={ed.school}
-                              onChange={(e) => updateEducation(idx, { school: e.target.value })}
-                            />
+                        <div key={idx} className="rounded-md border p-3 relative">
+                          {/* Action buttons */}
+                          <div className="absolute top-2 right-2 flex gap-1">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0"
+                              onClick={() => {
+                                addEducation({
+                                  school: ed.school,
+                                  degree: ed.degree,
+                                  start: ed.start,
+                                  end: ed.end
+                                })
+                              }}
+                              title="Duplicate"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-3.5">
+                                <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                              </svg>
+                            </Button>
+                            {education.length > 1 && (
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                                onClick={() => {
+                                  if (confirm('Are you sure you want to delete this education entry?')) {
+                                    removeEducation(idx)
+                                  }
+                                }}
+                                title="Delete"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-3.5">
+                                  <path d="M3 6h18" />
+                                  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                                  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                                </svg>
+                              </Button>
+                            )}
                           </div>
-                          <div className="grid gap-1.5">
-                            <label className="text-sm">Degree</label>
-                            <Input
-                              value={ed.degree}
-                              onChange={(e) => updateEducation(idx, { degree: e.target.value })}
-                            />
-                          </div>
-                          <div className="grid gap-1.5">
-                            <label className="text-sm">Start</label>
-                            <Input
-                              value={ed.start}
-                              onChange={(e) => updateEducation(idx, { start: e.target.value })}
-                            />
-                          </div>
-                          <div className="grid gap-1.5">
-                            <label className="text-sm">End</label>
-                            <Input
-                              value={ed.end}
-                              onChange={(e) => updateEducation(idx, { end: e.target.value })}
-                            />
+
+                          <div className="grid gap-2 md:grid-cols-2 pr-16">
+                            <div className="grid gap-1.5">
+                              <label className="text-sm">School</label>
+                              <Input
+                                value={ed.school}
+                                onChange={(e) => updateEducation(idx, { school: e.target.value })}
+                              />
+                            </div>
+                            <div className="grid gap-1.5">
+                              <label className="text-sm">Degree</label>
+                              <Input
+                                value={ed.degree}
+                                onChange={(e) => updateEducation(idx, { degree: e.target.value })}
+                              />
+                            </div>
+                            <div className="grid gap-1.5">
+                              <label className="text-sm">Start</label>
+                              <Input
+                                value={ed.start}
+                                onChange={(e) => updateEducation(idx, { start: e.target.value })}
+                              />
+                            </div>
+                            <div className="grid gap-1.5">
+                              <label className="text-sm">End</label>
+                              <Input
+                                value={ed.end}
+                                onChange={(e) => updateEducation(idx, { end: e.target.value })}
+                              />
+                            </div>
                           </div>
                         </div>
                       ))}
+                      
+                      {/* Add new education button */}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => {
+                          addEducation({
+                            school: "",
+                            degree: "",
+                            start: "",
+                            end: ""
+                          })
+                        }}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 size-4">
+                          <path d="M5 12h14" />
+                          <path d="M12 5v14" />
+                        </svg>
+                        Add Education
+                      </Button>
                     </div>
                   </AccordionContent>
                 </AccordionItem>
 
                 <AccordionItem value="skills">
-                  <AccordionTrigger>Skills</AccordionTrigger>
+                  <AccordionTrigger>Skills ({skills.filter(cat => cat.skills.length > 0).length})</AccordionTrigger>
                   <AccordionContent>
-                    <div className="grid gap-1.5">
-                      <label className="text-sm">Comma‑separated</label>
-                      <Input
-                        value={skillsString}
-                        onChange={(e) =>
-                          updateSkills(
-                            e.target.value
-                              .split(",")
-                              .map((s) => s.trim())
-                              .filter(Boolean)
-                          )
-                        }
-                      />
+                    <div className="grid gap-6">
+                      {skills.map((category, idx) => (
+                        <div key={idx} className="rounded-md border p-3 relative">
+                          {/* Action buttons */}
+                          <div className="absolute top-2 right-2 flex gap-1">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0"
+                              onClick={() => {
+                                addSkillCategory({
+                                  name: category.name,
+                                  skills: [...category.skills]
+                                })
+                              }}
+                              title="Duplicate"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-3.5">
+                                <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                              </svg>
+                            </Button>
+                            {skills.length > 1 && (
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                                onClick={() => {
+                                  if (confirm(`Are you sure you want to delete the "${category.name}" skill category?`)) {
+                                    removeSkillCategory(idx)
+                                  }
+                                }}
+                                title="Delete"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-3.5">
+                                  <path d="M3 6h18" />
+                                  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                                  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                                </svg>
+                              </Button>
+                            )}
+                          </div>
+
+                          <div className="grid gap-3 pr-16">
+                            {/* Category Name */}
+                            <div className="grid gap-1.5">
+                              <label className="text-sm font-medium">Category Name</label>
+                              <Input
+                                value={category.name}
+                                onChange={(e) =>
+                                  updateSkillCategory(idx, { name: e.target.value })
+                                }
+                                placeholder="e.g., Frameworks, Programming Languages, Tools"
+                              />
+                            </div>
+
+                            {/* Skills */}
+                            <div className="grid gap-1.5">
+                              <label className="text-sm font-medium">Skills (comma-separated)</label>
+                              <Input
+                                value={category.skills.join(", ")}
+                                onChange={(e) =>
+                                  updateSkillCategory(idx, {
+                                    skills: e.target.value
+                                      .split(",")
+                                      .map((s) => s.trim())
+                                      .filter(Boolean)
+                                  })
+                                }
+                                placeholder="e.g., React, Angular, Vue.js"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+
+                      {/* Add new skill category button */}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => {
+                          addSkillCategory({
+                            name: "",
+                            skills: []
+                          })
+                        }}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 size-4">
+                          <path d="M5 12h14" />
+                          <path d="M12 5v14" />
+                        </svg>
+                        Add Skill Category
+                      </Button>
                     </div>
                   </AccordionContent>
                 </AccordionItem>
@@ -652,8 +900,79 @@ export default function PreviewPage() {
         </section>
 
         {/* Right: Tips / Meta */}
-        <aside className="lg:col-span-3">
+        <aside className="lg:col-span-3 xl:col-span-3">
           <div className="grid gap-4">
+            {/* AI Improve Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">AI-Powered Improvements</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-3">
+                <div className="grid gap-2">
+                  <label className="text-sm">What would you like to improve?</label>
+                  <Textarea
+                    placeholder='Example: Add "Led a team of 5 developers" to my recent experience, and make my summary more impactful'
+                    value={improveInstructions}
+                    onChange={(e) => setImproveInstructions(e.target.value)}
+                    rows={4}
+                    className="resize-none"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    💡 <strong>Tip:</strong> Text in "double quotes" will be added exactly as written. Other text will be enhanced for professional tone.
+                  </p>
+                </div>
+                <Button
+                  onClick={handleImproveResume}
+                  disabled={isImproving || !improveInstructions.trim()}
+                  className="w-full"
+                >
+                  {isImproving ? (
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="mr-2 size-4 animate-spin"
+                      >
+                        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                      </svg>
+                      <span>Improving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="mr-2 size-4"
+                      >
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                      </svg>
+                      <span>Improve Resume</span>
+                    </>
+                  )}
+                </Button>
+                {improveError && (
+                  <div className="rounded-md border border-destructive/20 bg-destructive/10 px-3 py-2">
+                    <p className="text-xs leading-relaxed text-destructive">{improveError}</p>
+                  </div>
+                )}
+                {improveSuccess && (
+                  <div className="rounded-md border border-green-500/20 bg-green-500/10 px-3 py-2">
+                    <p className="text-xs leading-relaxed text-green-700 dark:text-green-400">{improveSuccess}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
             {/* CV Upload */}
             <Card>
               <CardHeader>
@@ -782,94 +1101,69 @@ export default function PreviewPage() {
         resumeData={resumeData}
         onConfirmDownload={handleConfirmDownload}
       >
-        <div id="resume-preview-modal" className="rounded-lg bg-white p-6">
-          <div className="grid grid-cols-[6px_1fr] gap-4">
-            <div className="rounded-sm bg-primary" aria-hidden />
-            <div>
-              <h1 className="text-2xl font-semibold leading-tight">{resumeData.personal.fullName}</h1>
-              <p className="text-sm text-muted-foreground">{resumeData.personal.title}</p>
-              
-              {/* Contact Details */}
-              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                {resumeData.personal.email && (
-                  <div className="flex items-center gap-1.5">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="size-3.5"
-                    >
-                      <rect width="20" height="16" x="2" y="4" rx="2" />
-                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                    </svg>
-                    <span>{resumeData.personal.email}</span>
-                  </div>
-                )}
-                {resumeData.personal.phone && (
-                  <div className="flex items-center gap-1.5">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="size-3.5"
-                    >
-                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                    </svg>
-                    <span>{resumeData.personal.phone}</span>
-                  </div>
-                )}
-                {resumeData.personal.location && (
-                  <div className="flex items-center gap-1.5">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="size-3.5"
-                    >
-                      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                      <circle cx="12" cy="10" r="3" />
-                    </svg>
-                    <span>{resumeData.personal.location}</span>
-                  </div>
-                )}
-              </div>
+        <div id="resume-preview-modal" className="bg-white text-black">
+          {/* Header - Compact and centered */}
+          <div className="text-center border-b-2 border-black pb-2 mb-4">
+            <h1 className="text-2xl font-bold leading-tight uppercase tracking-wide">{resumeData.personal.fullName}</h1>
+            <p className="text-sm font-medium mt-1 mb-2">{resumeData.personal.title}</p>
+            
+            {/* Contact Details - Horizontal compact layout */}
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs">
+              {resumeData.personal.email && (
+                <div className="flex items-center gap-1.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-3">
+                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                  <span>{resumeData.personal.email}</span>
+                </div>
+              )}
+              {resumeData.personal.phone && (
+                <div className="flex items-center gap-1.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-3">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                  </svg>
+                  <span>{resumeData.personal.phone}</span>
+                </div>
+              )}
+              {resumeData.personal.location && (
+                <div className="flex items-center gap-1.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-3">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  <span>{resumeData.personal.location}</span>
+                </div>
+              )}
             </div>
           </div>
 
-          <Separator className="my-5" />
+          {/* Content - Compact sections */}
+          <div className="grid gap-4">
+            {/* Summary */}
+            {resumeData.personal.summary && (
+              <section>
+                <SectionLabel>Professional Summary</SectionLabel>
+                <p className="mt-1.5 text-xs leading-snug">{resumeData.personal.summary}</p>
+              </section>
+            )}
 
-          <div className="grid gap-6">
+            {/* Experience */}
             <section>
-              <SectionLabel>Summary</SectionLabel>
-              <p className="mt-2 text-sm leading-relaxed">{resumeData.personal.summary}</p>
-            </section>
-
-            <section>
-              <SectionLabel>Experience</SectionLabel>
-              <div className="mt-2 grid gap-4">
+              <SectionLabel>Work Experience</SectionLabel>
+              <div className="mt-2 grid gap-3">
                 {resumeData.experience.map((exp, i) => (
                   <div key={i}>
-                    <div className="flex flex-wrap items-baseline justify-between gap-2">
-                      <p className="font-medium">
-                        {exp.role} · {exp.company}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1">
+                        <p className="text-sm font-bold leading-tight">{exp.company}</p>
+                        <p className="text-xs font-medium italic">{exp.role}</p>
+                      </div>
+                      <p className="text-[11px] font-medium whitespace-nowrap">
                         {exp.start} – {exp.end}
                       </p>
                     </div>
-                    <ul className="mt-1 list-disc pl-5 text-sm">
+                    <ul className="mt-1.5 list-disc pl-5 text-xs leading-snug space-y-1">
                       {exp.bullets.map((b, bi) => (
                         <li key={bi}>{b}</li>
                       ))}
@@ -879,44 +1173,53 @@ export default function PreviewPage() {
               </div>
             </section>
 
+            {/* Education */}
             <section>
               <SectionLabel>Education</SectionLabel>
-              <ul className="mt-2 grid gap-2 text-sm">
+              <div className="mt-2 grid gap-2">
                 {resumeData.education.map((ed, i) => (
-                  <li key={i} className="flex items-baseline justify-between gap-2">
-                    <span className="font-medium">
-                      {ed.degree}, {ed.school}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
+                  <div key={i} className="flex items-start justify-between gap-2">
+                    <div className="flex-1">
+                      <p className="text-sm font-bold leading-tight">{ed.school}</p>
+                      <p className="text-xs">{ed.degree}</p>
+                    </div>
+                    <p className="text-[11px] font-medium whitespace-nowrap">
                       {ed.start} – {ed.end}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            <section className="grid gap-2">
-              <SectionLabel>Skills</SectionLabel>
-              <div className="flex flex-wrap gap-1.5">
-                {resumeData.skills.map((s, i) => (
-                  <span key={i} className="rounded bg-secondary px-2 py-1 text-xs text-secondary-foreground">
-                    {s}
-                  </span>
+                    </p>
+                  </div>
                 ))}
               </div>
             </section>
 
-            {resumeData.languages.length > 0 && (
-              <section className="grid gap-2">
-                <SectionLabel>Languages</SectionLabel>
-                <p className="text-sm">{resumeData.languages.join(", ")}</p>
+            {/* Skills */}
+            {resumeData.skills.filter(cat => cat.skills.length > 0).length > 0 && (
+              <section>
+                <SectionLabel>Skills</SectionLabel>
+                <div className="mt-1.5 space-y-0.5">
+                  {resumeData.skills
+                    .filter(cat => cat.skills.length > 0)
+                    .map((category, i) => (
+                      <p key={i} className="text-xs leading-snug">
+                        <span className="font-bold">{category.name}:</span> {category.skills.join(", ")}
+                      </p>
+                    ))}
+                </div>
               </section>
             )}
 
+            {/* Languages */}
+            {resumeData.languages.length > 0 && (
+              <section>
+                <SectionLabel>Languages</SectionLabel>
+                <p className="mt-1.5 text-xs leading-snug">{resumeData.languages.join(" • ")}</p>
+              </section>
+            )}
+
+            {/* Certificates/Achievements */}
             {resumeData.certificates.length > 0 && (
-              <section className="grid gap-2">
-                <SectionLabel>Certificates</SectionLabel>
-                <ul className="list-disc pl-5 text-sm">
+              <section>
+                <SectionLabel>Achievement</SectionLabel>
+                <ul className="mt-1.5 list-disc pl-5 text-xs leading-snug space-y-1">
                   {resumeData.certificates.map((c, i) => (
                     <li key={i}>{c}</li>
                   ))}

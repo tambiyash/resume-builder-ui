@@ -32,7 +32,28 @@ export const resumeTemplateJSON = `
       "end": ""
     }
   ],
-  "skills": [],
+  "skills": [
+    {
+      "name": "Frameworks",
+      "skills": []
+    },
+    {
+      "name": "Programming Languages",
+      "skills": []
+    },
+    {
+      "name": "Tools",
+      "skills": []
+    },
+    {
+      "name": "Tech-Stacks",
+      "skills": []
+    },
+    {
+      "name": "Professional",
+      "skills": []
+    }
+  ],
   "languages": [],
   "certificates": []
 }`;
@@ -47,8 +68,10 @@ Rules:
 3. For dates, use the format shown in the CV (e.g., "2020", "Jan 2020", "2020-2022").
 4. Extract all work experience entries found in the CV.
 5. Extract all education entries found in the CV.
-6. For experience bullets, extract key achievements/responsibilities.
-7. Skip any additional information not matching the structure.`
+6. For experience bullets, extract key achievements/responsibilities using action verbs.
+7. Keep the professional summary concise (25-30 words maximum, 2 sentences).
+8. For skills, categorize them into: Frameworks, Programming Languages, Tools, Tech-Stacks, and Professional. Only include categories with skills. If a category has no skills, use an empty array.
+9. Skip any additional information not matching the structure.`
 
 export const calcATSSystemInstructions = `You are an ATS (Applicant Tracking System) analyzer. Analyze the candidate's resume against the job posting and provide a detailed evaluation.
 
@@ -91,23 +114,31 @@ ${resumeTemplateJSON}
 Optimization Rules:
 1. **DO NOT** change personal information (name, email, phone, location)
 2. **DO NOT** fabricate experiences, education, or skills that don't exist
-3. **DO** optimize the professional summary to align with the job requirements
+3. **DO** optimize the professional summary to align with the job requirements:
+   - MUST be 25-30 words maximum
+   - MUST be exactly 2 sentences
+   - Based on the candidate's current/most recent role
+   - Highlight key strengths and expertise
 4. **DO** rewrite experience bullets to be more impactful and ATS-friendly:
-   - Use strong action verbs
-   - Quantify achievements where possible
+   - Start EVERY bullet with a strong action verb (Led, Developed, Implemented, Managed, Optimized, etc.)
+   - Use simple, clear, defining sentences
+   - Quantify achievements wherever possible
    - Include relevant keywords from the job posting
-   - Focus on accomplishments, not just duties
+   - Focus on accomplishments and measurable results, not just duties
 5. **DO** optimize the professional title if it can better match the target role
-6. **DO** reorder and emphasize skills that match the job requirements
-7. **DO** add relevant technical keywords from the job posting to skills (if applicable)
-8. **DO** ensure all text is clear, concise, and ATS-compatible (avoid special characters)
-9. **DO NOT** add experiences or education entries that don't exist
-10. **DO NOT** change dates or company/school names
+6. **DO** categorize skills appropriately into: Frameworks, Programming Languages, Tools, Tech-Stacks, and Professional
+7. **DO** reorder and emphasize skills within categories that match the job requirements
+8. **DO** add relevant technical keywords from the job posting to the appropriate skill categories
+9. **DO** ensure all text is clear, concise, and ATS-compatible (avoid special characters)
+10. **DO NOT** add experiences or education entries that don't exist
+11. **DO NOT** change dates or company/school names
+12. **DO NOT** include skill categories with no skills (remove empty categories)
 
 Focus on:
+- Action verb-driven bullet points
 - Keyword optimization
-- Action-oriented language
 - Quantifiable results
+- Concise, impactful language
 - Relevance to the target position
 - ATS compatibility`;
 

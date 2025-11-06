@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import {
   Dialog,
   DialogContent,
@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 import type { ResumeData } from "@/lib/store/resume-store"
 
 type ResumePreviewModalProps = {
@@ -18,10 +19,6 @@ type ResumePreviewModalProps = {
   children: React.ReactNode
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <h3 className="text-sm font-medium tracking-wide text-muted-foreground">{children}</h3>
-}
-
 export function ResumePreviewModal({
   open,
   onOpenChange,
@@ -29,72 +26,124 @@ export function ResumePreviewModal({
   onConfirmDownload,
   children,
 }: ResumePreviewModalProps) {
-  const [countdown, setCountdown] = useState(3)
   const [isDownloading, setIsDownloading] = useState(false)
+  const [downloadSuccess, setDownloadSuccess] = useState(false)
 
-  useEffect(() => {
-    if (open && countdown > 0) {
-      const timer = setTimeout(() => {
-        setCountdown(countdown - 1)
-      }, 1000)
-      return () => clearTimeout(timer)
-    } else if (open && countdown === 0 && !isDownloading) {
-      setIsDownloading(true)
-      // Trigger download
-      onConfirmDownload()
-      // Close modal after a short delay
+  const handleDownload = async () => {
+    setIsDownloading(true)
+    setDownloadSuccess(false)
+    try {
+      await onConfirmDownload()
+      setDownloadSuccess(true)
+      // Auto-close modal after 2 seconds on success
       setTimeout(() => {
         onOpenChange(false)
-        setIsDownloading(false)
-        setCountdown(3) // Reset for next time
-      }, 1500)
+        setDownloadSuccess(false)
+      }, 2000)
+    } catch (error) {
+      console.error('Download failed:', error)
+    } finally {
+      setIsDownloading(false)
     }
-  }, [open, countdown, isDownloading, onConfirmDownload, onOpenChange])
-
-  const handleClose = () => {
-    onOpenChange(false)
-    setCountdown(3) // Reset countdown
-    setIsDownloading(false)
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Resume Preview</DialogTitle>
-          <DialogDescription>
-            Preview of how your resume will look in the PDF
-          </DialogDescription>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-[900px] min-w-[850px] max-h-[95vh] overflow-hidden flex flex-col">
+        <DialogHeader className="flex-shrink-0">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <DialogTitle>PDF Preview</DialogTitle>
+              <DialogDescription>
+                This is exactly how your resume will appear in the downloaded PDF
+              </DialogDescription>
+            </div>
+            <Button
+              onClick={handleDownload} 
+              disabled={isDownloading || downloadSuccess}
+              className="flex-shrink-0 mr-4"
+            >
+              {downloadSuccess ? (
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="mr-2 size-4"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  Downloaded!
+                </>
+              ) : isDownloading ? (
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="mr-2 size-4 animate-spin"
+                  >
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                  </svg>
+                  Downloading...
+                </>
+              ) : (
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="mr-2 size-4"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" x2="12" y1="15" y2="3" />
+                  </svg>
+                  Download PDF
+                </>
+              )}
+            </Button>
+          </div>
         </DialogHeader>
 
-        {/* Countdown/Download Message */}
-        <div className="rounded-md border border-green-500/20 bg-green-500/10 px-4 py-3">
-          <p className="text-sm leading-relaxed text-green-700 dark:text-green-400">
-            {isDownloading ? (
-              <>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="mr-2 inline size-4 animate-spin"
-                >
-                  <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                </svg>
-                Download starting...
-              </>
-            ) : (
-              <>Download will start in {countdown} second{countdown !== 1 ? 's' : ''}...</>
-            )}
-          </p>
-        </div>
-
-        {/* Resume Preview - Full Width */}
-        <div className="rounded-lg border bg-white p-8 shadow-sm">
-          {children}
+        {/* PDF Preview with A4 pages - Scaled to fit */}
+        <div className="flex-1 overflow-y-auto bg-gray-100 p-6">
+          <div className="mx-auto space-y-4">
+            {/* A4 Page Container - Scaled to fit modal */}
+            <div 
+              className="mx-auto bg-white shadow-lg origin-top"
+              style={{
+                width: '210mm',
+                minHeight: '297mm',
+                padding: '10mm',
+                boxSizing: 'border-box',
+                transform: 'scale(0.80)',
+                marginBottom: '-20%', // Compensate for scale transform
+              }}
+            >
+              {children}
+            </div>
+            
+            {/* Info text below preview */}
+            <p className="text-center text-sm text-muted-foreground">
+              Preview: Page 1 • A4 Size (210mm × 297mm) • 10mm margins • Text-based PDF
+            </p>
+            <p className="text-center text-xs text-muted-foreground mt-1">
+              Note: Scaled to 80% for preview. Actual PDF may span multiple pages based on content length.
+            </p>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

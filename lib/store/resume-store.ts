@@ -17,6 +17,11 @@ export type Education = {
   end: string
 }
 
+export type SkillCategory = {
+  name: string
+  skills: string[]
+}
+
 export type PersonalInfo = {
   fullName: string
   title: string
@@ -30,9 +35,25 @@ export type ResumeData = {
   personal: PersonalInfo
   experience: Experience[]
   education: Education[]
-  skills: string[]
+  skills: SkillCategory[]
   languages: string[]
   certificates: string[]
+}
+
+// Helper function to migrate old skills format to new categorized format
+function normalizeSkills(skills: any): SkillCategory[] {
+  // If already in new format, return as is
+  if (Array.isArray(skills) && skills.length > 0 && typeof skills[0] === 'object' && 'name' in skills[0]) {
+    return skills as SkillCategory[]
+  }
+  
+  // If old format (string array), convert to "Professional" category
+  if (Array.isArray(skills) && skills.length > 0 && typeof skills[0] === 'string') {
+    return [{ name: 'Professional', skills: skills as string[] }]
+  }
+  
+  // Empty or invalid, return empty array
+  return []
 }
 
 type ResumeStore = {
@@ -53,7 +74,9 @@ type ResumeStore = {
   removeEducation: (index: number) => void
   
   // Skills actions
-  setSkills: (skills: string[]) => void
+  updateSkillCategory: (index: number, category: Partial<SkillCategory>) => void
+  addSkillCategory: (category: SkillCategory) => void
+  removeSkillCategory: (index: number) => void
   
   // Languages actions
   setLanguages: (languages: string[]) => void
@@ -69,12 +92,12 @@ type ResumeStore = {
 const initialResumeData: ResumeData = {
   personal: {
     fullName: "John Doe",
-    title: "Product Designer",
+    title: "Senior Product Designer",
     email: "johndoe@example.com",
     phone: "+1 555 012345",
     location: "San Francisco, CA",
     summary:
-      "Human-centered designer with 6+ years crafting clear, accessible interfaces across web and mobile. I translate research into product strategy and deliver pragmatic, system‑minded solutions.",
+      "Product designer with 6+ years crafting accessible interfaces across web and mobile platforms. Translate user research into actionable product strategies delivering measurable business impact.",
   },
   experience: [
     {
@@ -83,8 +106,9 @@ const initialResumeData: ResumeData = {
       start: "2022",
       end: "Present",
       bullets: [
-        "Led redesign of checkout, improving conversion by 12%",
-        "Built design tokens and components enabling faster iteration",
+        "Led complete redesign of checkout flow, improving conversion rate by 12% and reducing cart abandonment by 18%",
+        "Developed comprehensive design system with 50+ reusable components, accelerating product development by 30%",
+        "Collaborated with engineering teams to implement responsive designs across web and mobile platforms",
       ],
     },
     {
@@ -92,13 +116,21 @@ const initialResumeData: ResumeData = {
       role: "Product Designer",
       start: "2019",
       end: "2022",
-      bullets: ["Shipped onboarding flows", "Ran usability testing across 3 product areas"],
+      bullets: [
+        "Designed and launched user onboarding flows, increasing activation rate by 25%",
+        "Conducted usability testing sessions across 3 product areas with 50+ participants",
+        "Established design documentation standards adopted company-wide by 15+ designers",
+      ],
     },
   ],
-  education: [{ school: "State University", degree: "B.S. in HCI", start: "2014", end: "2018" }],
-  skills: ["Figma", "User Research", "Prototyping", "Design Systems", "Accessibility"],
+  education: [{ school: "State University", degree: "B.S. in Human-Computer Interaction", start: "2014", end: "2018" }],
+  skills: [
+    { name: "Frameworks", skills: ["React", "Angular", "Vue.js"] },
+    { name: "Tools", skills: ["Figma", "Adobe XD", "Sketch", "InVision"] },
+    { name: "Professional", skills: ["User Research", "Prototyping", "Design Systems", "Accessibility", "Wireframing", "User Testing", "Responsive Design"] },
+  ],
   languages: ["English", "Spanish"],
-  certificates: ["NN/g UX Certification"],
+  certificates: ["Nielsen Norman Group UX Certification"],
 }
 
 export const useResumeStore = create<ResumeStore>()(
@@ -176,9 +208,29 @@ export const useResumeStore = create<ResumeStore>()(
         })),
 
       // Skills actions
-      setSkills: (skills) =>
+      updateSkillCategory: (index, category) =>
+        set((state) => {
+          const newSkills = [...state.resume.skills]
+          newSkills[index] = { ...newSkills[index], ...category }
+          return {
+            resume: { ...state.resume, skills: newSkills },
+          }
+        }),
+
+      addSkillCategory: (category) =>
         set((state) => ({
-          resume: { ...state.resume, skills },
+          resume: {
+            ...state.resume,
+            skills: [...state.resume.skills, category],
+          },
+        })),
+
+      removeSkillCategory: (index) =>
+        set((state) => ({
+          resume: {
+            ...state.resume,
+            skills: state.resume.skills.filter((_, i) => i !== index),
+          },
         })),
 
       // Languages actions
@@ -195,9 +247,16 @@ export const useResumeStore = create<ResumeStore>()(
 
       // Import/Reset actions
       importResumeData: (data) =>
-        set((state) => ({
-          resume: { ...state.resume, ...data },
-        })),
+        set((state) => {
+          // Normalize skills if present
+          const normalizedData = { ...data }
+          if (data.skills) {
+            normalizedData.skills = normalizeSkills(data.skills)
+          }
+          return {
+            resume: { ...state.resume, ...normalizedData },
+          }
+        }),
 
       resetResume: () =>
         set(() => ({
@@ -254,7 +313,9 @@ export const useEducationActions = () =>
 
 export const useSkillsActions = () =>
   useResumeStore(useShallow((state) => ({
-    setSkills: state.setSkills,
+    updateSkillCategory: state.updateSkillCategory,
+    addSkillCategory: state.addSkillCategory,
+    removeSkillCategory: state.removeSkillCategory,
   })))
 
 export const useLanguagesActions = () =>
