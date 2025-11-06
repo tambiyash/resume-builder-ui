@@ -1,3 +1,4 @@
+import { analyzeCVInstructions } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 
@@ -54,47 +55,7 @@ export async function POST(request: NextRequest) {
     // Create assistant with file_search tool
     const assistant = await openai.beta.assistants.create({
       name: 'CV Parser',
-      instructions: `You are a CV/Resume parser. Extract information from the CV and return it as a valid JSON object matching this exact structure:
-
-{
-  "personal": {
-    "fullName": "",
-    "title": "",
-    "email": "",
-    "phone": "",
-    "location": "",
-    "summary": ""
-  },
-  "experience": [
-    {
-      "company": "",
-      "role": "",
-      "start": "",
-      "end": "",
-      "bullets": []
-    }
-  ],
-  "education": [
-    {
-      "school": "",
-      "degree": "",
-      "start": "",
-      "end": ""
-    }
-  ],
-  "skills": [],
-  "languages": [],
-  "certificates": []
-}
-
-Rules:
-1. Return ONLY the JSON object, no additional text or markdown formatting.
-2. If a field is not found in the CV, leave it as an empty string or empty array.
-3. For dates, use the format shown in the CV (e.g., "2020", "Jan 2020", "2020-2022").
-4. Extract all work experience entries found in the CV.
-5. Extract all education entries found in the CV.
-6. For experience bullets, extract key achievements/responsibilities.
-7. Skip any additional information not matching the structure.`,
+      instructions: analyzeCVInstructions,
       model: 'gpt-4o-mini',
       tools: [{ type: 'file_search' }],
       response_format: { type: 'json_object' },

@@ -1,3 +1,4 @@
+import { calcATSSystemInstructions, calcATSUserInstructions } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 
@@ -67,39 +68,11 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: 'system',
-          content: `You are an ATS (Applicant Tracking System) analyzer. Analyze the candidate's resume against the job posting and provide a detailed evaluation.
-
-Return a JSON object with the following structure:
-{
-  "score": 85,
-  "summary": "Brief 2-3 sentence summary of the match",
-  "strengths": ["Strength 1", "Strength 2", "Strength 3"],
-  "gaps": ["Gap 1", "Gap 2"],
-  "recommendations": ["Recommendation 1", "Recommendation 2", "Recommendation 3"],
-  "keywordMatch": {
-    "matched": ["keyword1", "keyword2"],
-    "missing": ["keyword3", "keyword4"]
-  }
-}
-
-Rules:
-1. Score should be between 0-100
-2. Be objective and specific in your analysis
-3. Focus on skills, experience, and qualifications match
-4. Identify concrete gaps and actionable recommendations
-5. Extract key technical skills and keywords from the job posting`,
+          content: calcATSSystemInstructions,
         },
         {
           role: 'user',
-          content: `Analyze this resume against the job posting and calculate ATS score.
-
-RESUME DATA:
-${JSON.stringify(resumeData, null, 2)}
-
-JOB POSTING:
-${jobContent}
-
-Provide a comprehensive ATS analysis with score, strengths, gaps, and recommendations.`,
+          content: calcATSUserInstructions(JSON.stringify(resumeData, null, 2), jobContent),
         },
       ],
       response_format: { type: 'json_object' },

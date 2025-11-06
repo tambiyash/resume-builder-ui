@@ -52,7 +52,7 @@ export function TopNav() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link href="/" className="font-medium">Resume Builder Studio</Link>
 
-        {!isAuthenticated ? (
+        {/* {!isAuthenticated ? (
           <div className="flex items-center gap-3">
             <Button asChild variant="ghost">
               <Link href="/login">Log in</Link>
@@ -87,7 +87,7 @@ export function TopNav() {
               </div>
             )}
           </div>
-        )}
+        )} */}
       </div>
     </nav>
   )

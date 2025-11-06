@@ -1,3 +1,4 @@
+import { improveResumeSystemInstructions, improveResumeUserInstructions, resumeTemplateJSON } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 
@@ -67,75 +68,11 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: 'system',
-          content: `You are an expert resume optimization specialist. Your task is to improve a candidate's resume to maximize their ATS (Applicant Tracking System) score for a specific job posting.
-
-Return a JSON object with the EXACT same structure as the input resume:
-
-{
-  "personal": {
-    "fullName": "",
-    "title": "",
-    "email": "",
-    "phone": "",
-    "location": "",
-    "summary": ""
-  },
-  "experience": [
-    {
-      "company": "",
-      "role": "",
-      "start": "",
-      "end": "",
-      "bullets": []
-    }
-  ],
-  "education": [
-    {
-      "school": "",
-      "degree": "",
-      "start": "",
-      "end": ""
-    }
-  ],
-  "skills": [],
-  "languages": [],
-  "certificates": []
-}
-
-Optimization Rules:
-1. **DO NOT** change personal information (name, email, phone, location)
-2. **DO NOT** fabricate experiences, education, or skills that don't exist
-3. **DO** optimize the professional summary to align with the job requirements
-4. **DO** rewrite experience bullets to be more impactful and ATS-friendly:
-   - Use strong action verbs
-   - Quantify achievements where possible
-   - Include relevant keywords from the job posting
-   - Focus on accomplishments, not just duties
-5. **DO** optimize the professional title if it can better match the target role
-6. **DO** reorder and emphasize skills that match the job requirements
-7. **DO** add relevant technical keywords from the job posting to skills (if applicable)
-8. **DO** ensure all text is clear, concise, and ATS-compatible (avoid special characters)
-9. **DO NOT** add experiences or education entries that don't exist
-10. **DO NOT** change dates or company/school names
-
-Focus on:
-- Keyword optimization
-- Action-oriented language
-- Quantifiable results
-- Relevance to the target position
-- ATS compatibility`,
+          content: improveResumeSystemInstructions,
         },
         {
           role: 'user',
-          content: `Improve this resume for the following job posting to maximize ATS score.
-
-CURRENT RESUME:
-${JSON.stringify(resumeData, null, 2)}
-
-JOB POSTING:
-${jobContent}
-
-Return ONLY the improved resume data in the exact JSON format specified. Optimize for ATS while maintaining truthfulness.`,
+          content: improveResumeUserInstructions(JSON.stringify(resumeData, null, 2), jobContent),
         },
       ],
       response_format: { type: 'json_object' },
